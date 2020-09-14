@@ -502,16 +502,20 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    food_coordinates = foodGrid.asList()
-    if not food_coordinates:
+    # problem.heuristicInfo['wallCount'] = problem.walls.count()
+    food_list = foodGrid.asList()
+    if len(food_list)==0:
         return 0
-    res = -1
-    for tmp in food_coordinates:
-        dist = mazeDistance(tmp, position, problem.startingGameState)
-        res = max(res,dist)
-    return res
+    heuristic = -999
+    for x in food_list:
+        distance = mazeDistance(x, position, problem.startingGameState)
+        # mazeDistance function found below
+        heuristic = max(heuristic,distance)
+        # basically find the position between agent and any fruit
+        # take the maximum distance as heuristic
+    return heuristic
     "*** YOUR CODE HERE ***"
-    return 0
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -540,7 +544,9 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
+        # return search.depthFirstSearch(problem)
+        return search.breadthFirstSearch(problem)
+        # return search.aStarSearch(problem)
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
@@ -576,6 +582,17 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
+        # for i in self._visitedlist:
+        #     if i not in self._visited:
+        #         return False
+        # return True       
+        food_list = self.food
+        if(food_list[x][y] == True):
+            return True
+        alist = food_list.asList()
+        if len(alist) == 0:
+            return True
+        return False
 
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
